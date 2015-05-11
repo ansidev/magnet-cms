@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+#RewriteBase /
+RewriteRule ^([a-zA-Z0-9]+)$ modules/$1/index.php
+#RewriteRule ^([a-zA-Z0-9_-]+)$ modules/admin/user.php?id=$1
+</IfModule>
