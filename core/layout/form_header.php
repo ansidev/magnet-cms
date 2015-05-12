@@ -7,8 +7,8 @@
     <title>Magnet: A micro CMS built with PHP</title>
 
     <!-- Bootstrap -->
-    <link href="../resources/css/bootstrap.css" rel="stylesheet">
-    <link href="../resources/css/sb-admin-2.css" rel="stylesheet">
+    <link href="resources/css/bootstrap.css" rel="stylesheet">
+    <link href="resources/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

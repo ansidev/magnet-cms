@@ -1,4 +1,4 @@
-<?php include_once('core/layout/header.php'); ?>
+<?php include_once('core/layout/form_header.php'); ?>
 <body>
 <div class='container'>
     <div class="row">
@@ -20,8 +20,13 @@
                     $userInfo = mysqli_fetch_assoc($query);
                     session_start();
                     $_SESSION['user'] = $userInfo;
-                    $_SESSION['messages'][] = 'Chào bạn, ' . $userInfo['username'];
-                    header("location:admin/index.php");
+                    $_SESSION['messages'][] = 'Chào bạn, <strong>' . $userInfo['username'] . '</strong>';
+                    if ($userInfo['role'] === 'Administrator') {
+                        header("location:admin/index.php");
+                    }
+                    if ($userInfo['role'] === 'User') {
+                        header("location:user/index.php");
+                    }
                 } else {
                     echo "<p>Username hoặc password không đúng !!!</p>";
                 }

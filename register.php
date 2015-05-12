@@ -3,8 +3,8 @@ session_start();
 if (isset($_SESSION['user'])) {
     header('location:index.php');
 }
+include_once('core/layout/form_header.php');
 ?>
-<?php include_once('core/layout/header.php'); ?>
 <div class="container" style="padding-top: 70px">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -34,8 +34,8 @@ if (isset($_SESSION['user'])) {
                             $query = $conn->query($sql);
                             $total = $query->num_rows;
                             if ($total === 0) {
-                                $sql = "INSERT INTO users(`username`, `password`, `fullname`, `address`, `phone`, `role`) VALUES ('" . $username . "','" . $password . "','" . $fullname . "','" . $address . "','" . $phone . "','" . $role . "')";
-                                $query = mysqli_query($conn, $sql);
+                                $sql = "INSERT INTO `users` (`username`, `password`, `fullname`, `address`, `phone`, `role`) VALUES ('" . $username . "','" . $password . "','" . $fullname . "','" . $address . "','" . $phone . "','" . $role . "')";
+                                $query = $conn->query($sql);
                                 $_SESSION['user'] = $_POST;
                                 $_SESSION['user']['role'] = 'User';
                                 header("location:index.php");

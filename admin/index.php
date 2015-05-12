@@ -1,10 +1,5 @@
 <?php
-session_start();
-if (!empty($_SESSION['user']) && $_SESSION['user']['role'] === 'Administrator') {
-}
-else {
-    header('location:../login.php');
-}
+include_once('check_role.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +11,7 @@ else {
 
     <!-- Bootstrap -->
     <link href="../resources/css/bootstrap.css" rel="stylesheet">
+    <link href="../resources/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,98 +21,70 @@ else {
     <![endif]-->
 </head>
 <body>
-<?php include_once('header.php'); ?>
+<?php
+include_once('../core/layout/dashboard_header.php');
+include_once('../core/database/connect.php');
+?>
 
 <div class="container" style="padding-top: 70px;">
-
+    <?php
+    $sql = "SELECT * FROM `users`";
+    $query = $conn->query($sql);
+    $total_users = $query->num_rows;
+    $sql = "SELECT * FROM `posts`";
+    $query = $conn->query($sql);
+    $total_books = $query->num_rows;
+    ?>
     <div id="users">
+        <?php include_once('../core/layout/messages.php'); ?>
         <div class="row">
-            <div class="col-lg-12">
-                <?php
-                if (!empty($_SESSION['messages'])) {
-                    foreach ($_SESSION['messages'] as $message) { ?>
-                        <div class="alert alert-warning alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <?php
-                            echo $message;
-                            array_shift($_SESSION['messages']);
-                            ?>
-                        </div>
-                        <?php
-                    }
-                }
-                ?>
-            </div>
-            <!-- /.col-lg-12 -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Quản lý người dùng</h1>
-            </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
+            <div class="col-lg-6 col-md-6">
+                <div class="panel panel-red">
                     <div class="panel-heading">
-                        Danh sách người dùng
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div class="dataTable_wrapper">
-                            <table class="table table-striped table-bordered table-hover" id="user-table">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Username</th>
-                                    <th>Full name</th>
-                                    <th>Address</th>
-                                    <th>Phone</th>
-                                    <th>Role</th>
-                                    <th class="actions">Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-                                include_once('../core/database/connect.php');
-                                $sql = "SELECT * FROM `users`";
-                                $query = $conn->query($sql);
-                                $total = $query->num_rows;
-                                if ($total > 0) {
-                                    while ($user = $query->fetch_assoc()) { ?>
-                                        <tr>
-                                            <td><?= $user['id'] ?></td>
-                                            <td><?= $user['username'] ?></td>
-                                            <td><?= $user['fullname'] ?></td>
-                                            <td><?= $user['address'] ?></td>
-                                            <td><?= $user['phone'] ?></td>
-                                            <td><?= $user['role'] ?></td>
-                                            <td class="actions">
-                                                <a href="user.php?id=<?= $user['id'] ?>&action=edit"
-                                                   class="btn btn-primary">Edit</a>
-                                                <a href="user.php?id=<?= $user['id'] ?>&action=delete"
-                                                   class="btn btn-danger">Delete</a>
-                                            </td>
-                                        </tr>
-                                    <?php }
-                                }
-                                ?>
-                                </tbody>
-                            </table>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-user fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><?= $total_users ?></div>
+                                <div>Người dùng</div>
+                            </div>
                         </div>
-                        <!-- /.table-responsive -->
                     </div>
-                    <!-- /.panel-body -->
+                    <a href="user.php">
+                        <div class="panel-footer">
+                            <span class="pull-left">Quản lý tài khoản</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
                 </div>
-                <!-- /.panel -->
             </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
-    </div>
-    <!-- /#users -->
+            <div class="col-lg-6 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tag fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><?= $total_books ?></div>
+                                <div>Bài viết</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="post.php">
+                        <div class="panel-footer">
+                            <span class="pull-left">Quản lý bài viết</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- /container -->
 

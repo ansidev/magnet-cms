@@ -1,24 +1,8 @@
 <?php
 include_once('check_role.php');
+include_once('../core/layout/header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Magnet: A micro CMS built with PHP</title>
 
-    <!-- Bootstrap -->
-    <link href="../resources/css/bootstrap.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <!--<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>-->
-    <!--<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
-    <![endif]-->
-</head>
 <body>
 <?php include_once('../core/layout/dashboard_header.php'); ?>
 <div class="container" style="padding-top: 70px;">
@@ -26,72 +10,17 @@ include_once('check_role.php');
         <div id="users">
             <?php include_once('../core/layout/messages.php'); ?>
             <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Quản lý người dùng</h1>
+                <div class="col-lg-3 col-md-3">
+                    <a href="user.php" class="btn btn-primary">Quản lý tài khoản</a>
+                    <a href="post.php" class="btn btn-danger">Quản lý bài viết</a>
                 </div>
-                <!-- /.col-lg-12 -->
             </div>
-            <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Danh sách người dùng
-                        </div>
-                        <!-- /.panel-heading -->
-                        <table class="panel-body table table-striped table-bordered table-hover" id="user-table">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Full name</th>
-                                <th>Address</th>
-                                <th>Phone</th>
-                                <th>Role</th>
-                                <th class="actions">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            include_once('../core/database/connect.php');
-                            $sql = "SELECT * FROM `users`";
-                            $query = $conn->query($sql);
-                            $total = $query->num_rows;
-                            if ($total > 0) {
-                                while ($user = $query->fetch_assoc()) { ?>
-                                    <tr>
-                                        <td><?= $user['id'] ?></td>
-                                        <td><?= $user['username'] ?></td>
-                                        <td><?= $user['fullname'] ?></td>
-                                        <td><?= $user['address'] ?></td>
-                                        <td><?= $user['phone'] ?></td>
-                                        <td><?= $user['role'] ?></td>
-                                        <td class="actions">
-                                            <a href="user.php?id=<?= $user['id'] ?>&action=edit"
-                                               class="btn btn-primary">Sửa</a>
-                                            <a href="user.php?id=<?= $user['id'] ?>&action=delete"
-                                               class="btn btn-danger">Xóa</a>
-                                        </td>
-                                    </tr>
-                                <?php }
-                            }
-                            ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- /.row -->
         </div>
         <!-- /#users -->
     <?php } else {
-        if (!empty($_GET['action'])) {
+        if (isset($_GET['action']) && isset($_GET['id'])) {
             $action = $_GET['action'];
-            if (!empty($_GET['id'])) {
-                $id = $_GET['id'];
-            }
+            $id = $_GET['id'];
             include_once('../core/database/connect.php');
             switch ($action) {
                 case 'create':
@@ -106,14 +35,19 @@ include_once('check_role.php');
                                 <div class="col-md-4 col-md-offset-4">
                                     <div class="users">
                                         <form method="post" accept-charset="utf-8" action="edit_user.php">
-                                            <input type="hidden" name="id" id="id" value="<?= $id ?>">
-
                                             <div style="display:none;">
                                                 <input class="form-control" type="hidden"
                                                        name="_method" value="POST">
                                             </div>
                                             <fieldset>
                                                 <legend>Sửa thông tin người dùng</legend>
+                                                <div class="input form-group text required">
+                                                    <label for="username">Username</label>
+                                                    <input
+                                                        class="form-control" type="text" name="username"
+                                                        required="required" maxlength="100"
+                                                        id="username" value="<?= $user['username'] ?>">
+                                                </div>
                                                 <div class="input form-group text">
                                                     <label for="fullname">Full Name</label>
                                                     <input
@@ -156,13 +90,14 @@ include_once('check_role.php');
                                                     </select>
                                                 </div>
                                             </fieldset>
-                                            <button class="btn btn-primary" type="submit">Cập nhật thông tin</button>
+                                            <button class="btn btn-primary" type="submit">Update</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         <?php }
                     } else {
+                        echo 'User does not exist';
                         $_SESSION['messages'][] = 'Người dùng không tồn tại !!!';
                         header('location:user.php');
                     }
@@ -198,8 +133,6 @@ include_once('check_role.php');
                     }
                     break;
             }
-        } else {
-            header('location:user.php');
         }
     } ?>
     <?php include_once('../core/database/disconnect.php'); ?>

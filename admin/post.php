@@ -27,49 +27,48 @@ include_once('check_role.php');
             <?php include_once('../core/layout/messages.php'); ?>
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Quản lý người dùng</h1>
+                    <h1>Quản lý bài viết</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
+                    <div style="padding-bottom: 15px;">
+                        <a href="post.php?action=create" class="btn btn-success">Tạo bài viết mới</a>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Danh sách người dùng
+                            Danh sách bài viết
                         </div>
                         <!-- /.panel-heading -->
                         <table class="panel-body table table-striped table-bordered table-hover" id="user-table">
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Username</th>
-                                <th>Full name</th>
-                                <th>Address</th>
-                                <th>Phone</th>
-                                <th>Role</th>
+                                <th>Title</th>
+                                <th>Content</th>
+                                <th>Tác giả</th>
                                 <th class="actions">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php
                             include_once('../core/database/connect.php');
-                            $sql = "SELECT * FROM `users`";
+                            $sql = "SELECT * FROM `posts`";
                             $query = $conn->query($sql);
                             $total = $query->num_rows;
                             if ($total > 0) {
-                                while ($user = $query->fetch_assoc()) { ?>
+                                while ($post = $query->fetch_assoc()) { ?>
                                     <tr>
-                                        <td><?= $user['id'] ?></td>
-                                        <td><?= $user['username'] ?></td>
-                                        <td><?= $user['fullname'] ?></td>
-                                        <td><?= $user['address'] ?></td>
-                                        <td><?= $user['phone'] ?></td>
-                                        <td><?= $user['role'] ?></td>
+                                        <td><?= $post['id'] ?></td>
+                                        <td><?= $post['title'] ?></td>
+                                        <td><?= $post['content'] ?></td>
+                                        <td><?= $post['user_id'] ?></td>
                                         <td class="actions">
-                                            <a href="user.php?id=<?= $user['id'] ?>&action=edit"
+                                            <a href="post.php?id=<?= $post['id'] ?>&action=edit"
                                                class="btn btn-primary">Sửa</a>
-                                            <a href="user.php?id=<?= $user['id'] ?>&action=delete"
+                                            <a href="post.php?id=<?= $post['id'] ?>&action=delete"
                                                class="btn btn-danger">Xóa</a>
                                         </td>
                                     </tr>
@@ -95,17 +94,50 @@ include_once('check_role.php');
             include_once('../core/database/connect.php');
             switch ($action) {
                 case 'create':
+                    ?>
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="users">
+                                <form method="post" accept-charset="utf-8" action="create_post.php">
+                                    <input type="hidden" name="id" id="id" value="<?= $id ?>">
+
+                                    <div style="display:none;">
+                                        <input class="form-control" type="hidden"
+                                               name="_method" value="POST">
+                                    </div>
+                                    <fieldset>
+                                        <legend>Tạo bài viết mới</legend>
+                                        <div class="input form-group text">
+                                            <label for="title">Title</label>
+                                            <input
+                                                class="form-control" type="text" name="title" maxlength="100"
+                                                id="title">
+                                        </div>
+                                        <div class="input form-group text">
+                                            <label for="content">Content</label>
+                                            <textarea
+                                                class="form-control" type="text" name="content" maxlength="255"
+                                                rows="10"
+                                                id="content"></textarea>
+                                        </div>
+                                    </fieldset>
+                                    <button class="btn btn-primary" type="submit">Đăng bài</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
                     break;
                 case 'edit':
-                    $sql = "SELECT * FROM `users` WHERE `id` = '" . $id . "' LIMIT 1";
+                    $sql = "SELECT * FROM `posts` WHERE `id` = '" . $id . "' LIMIT 1";
                     $query = $conn->query($sql);
                     $total = $query->num_rows;
                     if ($total > 0) {
-                        while ($user = $query->fetch_assoc()) { ?>
+                        while ($post = $query->fetch_assoc()) { ?>
                             <div class="row">
-                                <div class="col-md-4 col-md-offset-4">
+                                <div class="col-md-6 col-md-offset-3">
                                     <div class="users">
-                                        <form method="post" accept-charset="utf-8" action="edit_user.php">
+                                        <form method="post" accept-charset="utf-8" action="edit_post.php">
                                             <input type="hidden" name="id" id="id" value="<?= $id ?>">
 
                                             <div style="display:none;">
@@ -113,77 +145,48 @@ include_once('check_role.php');
                                                        name="_method" value="POST">
                                             </div>
                                             <fieldset>
-                                                <legend>Sửa thông tin người dùng</legend>
+                                                <legend>Sửa bài viết</legend>
                                                 <div class="input form-group text">
-                                                    <label for="fullname">Full Name</label>
+                                                    <label for="title">Title</label>
                                                     <input
-                                                        class="form-control" type="text" name="fullname" maxlength="100"
-                                                        id="fullname" value="<?= $user['fullname'] ?>">
+                                                        class="form-control" type="text" name="title" maxlength="100"
+                                                        id="title" value="<?= $post['title'] ?>">
                                                 </div>
-                                                <div class="input form-group password">
-                                                    <label for="password">Password</label>
-                                                    <input
-                                                        class="form-control" type="password" name="password"
-                                                        id="password">
-                                                </div>
-                                                <div class="input form-group address required">
-                                                    <label for="address">Address</label>
-                                                    <input
-                                                        class="form-control" type="text" name="address"
-                                                        required="required" maxlength="100"
-                                                        id="address" value="<?= $user['address'] ?>">
-                                                </div>
-                                                <div class="input form-group phone required">
-                                                    <label for="phone">Phone</label>
-                                                    <input
-                                                        class="form-control" type="text" name="phone"
-                                                        required="required" maxlength="100"
-                                                        id="phone" value="<?= $user['phone'] ?>">
-                                                </div>
-                                                <div class="input form-group role required">
-                                                    <label for="role">Role</label>
-                                                    <select class="form-control" name="role">
-                                                        <option
-                                                            value="Administrator" <?php if (strcmp($user['role'], 'Administrator') === 0) {
-                                                            echo 'selected = "true"';
-                                                        } ?>>Administrator
-                                                        </option>
-                                                        <option
-                                                            value="User" <?php if (strcmp($user['role'], 'User') === 0) {
-                                                            echo 'selected = "true"';
-                                                        } ?>>User
-                                                        </option>
-                                                    </select>
+                                                <div class="input form-group text">
+                                                    <label for="content">Content</label>
+                                            <textarea
+                                                class="form-control" type="text" name="content" maxlength="255"
+                                                rows="10"
+                                                id="content"><?= $post['content'] ?></textarea>
                                                 </div>
                                             </fieldset>
-                                            <button class="btn btn-primary" type="submit">Cập nhật thông tin</button>
+                                            <button class="btn btn-primary" type="submit">Cập nhật bài viết</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         <?php }
                     } else {
-                        $_SESSION['messages'][] = 'Người dùng không tồn tại !!!';
-                        header('location:user.php');
+                        $_SESSION['messages'][] = 'Bài viết không tồn tại !!!';
+                        header('location:post.php');
                     }
                     break;
                 case 'delete':
-                    $sql = "SELECT * FROM `users` WHERE `id` = '" . $id . "' LIMIT 1";
+                    $sql = "SELECT * FROM `posts` WHERE `id` = '" . $id . "' LIMIT 1";
                     $query = $conn->query($sql);
                     $total = $query->num_rows;
-
                     if ($total > 0) {
-                        while ($user = $query->fetch_assoc()) { ?>
+                        while ($post = $query->fetch_assoc()) { ?>
                             <div class="row">
                                 <div class="col-md-4 col-md-offset-4">
                                     <div class="users">
-                                        <h1>Xóa người dùng</h1>
+                                        <h1>Xóa bài viết</h1>
 
-                                        <p>Bạn có muốn xóa người dùng
-                                            <strong><?= $user['username'] ?></strong>?
+                                        <p>Bạn có muốn xóa bài viết
+                                            <strong><?= $post['title'] ?></strong>?
                                         </p>
 
-                                        <form action="delete_user.php" method="post">
+                                        <form action="delete_post.php" method="post">
                                             <div class="form-group">
                                                 <input type="hidden" name="id" value="<?= $id ?>"/>
                                                 <input type="submit" class="btn btn-primary" name="delete" value="Có"/>
